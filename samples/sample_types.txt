@@ -1,0 +1,91 @@
+fobj = open("example.txt", "r")
+questions = fobj.read().split("\n\n")
+questions_type_list = []
+questions_description_list = []
+questions_options_list = []
+questions_correct_answers_list = []
+questions_marks_list = []
+a = 0
+while a < len(questions):
+    lines = questions[a].split("\n")
+    b = 0
+    while b < len(lines):
+        if lines[b][0:11:] == "Question - ":
+            questions_type_list.append(lines[b][11::].lower())
+        if (questions_type_list[a] == "single" or questions_type_list[a] == "multiple") and lines[b][0:18:] == "Possible Answers: ":
+            desc_ls = []
+            options_ls = []
+            index = 1
+            while index < b:
+                desc_ls.append(lines[index])
+                index += 1
+            questions_description_list.append("\n".join(desc_ls))
+            index = 1
+            while index < 5:
+                options_ls.append((lines[b+index], False))
+                index += 1
+            b += 4
+            questions_options_list.append(options_ls)
+        if questions_type_list[a] == "short" and lines[b][0:17:] == "Expected Answer: ":
+            desc_ls = []
+            index = 1
+            while index < b:
+                desc_ls.append(lines[index])
+                index += 1
+            questions_description_list.append("\n".join(desc_ls))
+        if lines[b][0:17:] == "Expected Answer: ":
+            questions_correct_answers_list.append(lines[b][17::])
+        if lines[b][0:7:] == "Marks: ":
+            questions_marks_list.append(lines[b][7::])
+        b += 1
+    a += 1
+
+question_index = 0
+mcq_question_index = 0
+question_list = []
+
+while question_index < len(questions_type_list):
+    a = question.Question(questions_type_list[question_index])
+    a.set_description(questions_description_list[question_index])
+    a.set_correct_answer(questions_correct_answers_list[question_index]) #bug may happen with short questions
+    if a.qtype == "single" or a.qtype == "multiple":
+        a.set_answer_options(questions_options_list[mcq_question_index])
+        mcq_question_index += 1
+    a.set_marks(int(questions_marks_list[question_index]))
+    question_list.append(a)
+    question_index += 1.ap...dddddQuestion - Single
+Which of the following Python statements will display this message in the terminal?
+*********************************
+Terminal output:
+<Start>I love INFO1110<End>
+*********************************
+Possible Answers: 
+A. print(I love INFO1110)
+B. print("I" "love" "INFO1110")
+C. print("I love" "INFO1110")
+D. print("I love INFO1110")
+Expected Answer: D
+Marks: 1
+
+Question - Multiple
+Select all the animals that are mammals:
+Possible Answers: 
+A. whale
+B. dog
+C. fish
+D. frog
+Expected Answer: A, B
+Marks: 2
+
+Question - Short
+This question is based on the program below:
+*********************************
+# Start 
+name = input("What's your name?: ")
+# End
+*********************************
+After running the program, you have keyed in "Bob" followed by the Enter key.
+What is the value stored in variable name?
+Expected Answer: "Bob"
+Marks: 1
+
